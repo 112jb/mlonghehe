@@ -31,6 +31,7 @@ jobs:
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/uam.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
