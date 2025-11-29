@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download tools (raw link đúng)
+      - name: Download tools (link raw đúng 100%)
         run: |
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
@@ -46,16 +46,11 @@ jobs:
           wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
           chmod +x *
 
-      - name: Lấy proxy tươi (fix 100% không lỗi)
+      - name: Lấy proxy tươi (30k+ mỗi lần)
         run: |
-          echo "Đang lấy proxy tươi 2025..."
-          node proxy.js || echo "Lỗi nhẹ proxy.js nhưng vẫn tiếp tục bắn (dùng proxy cũ nếu có)"
-          if [ -f proxy.txt ]; then
-            echo "Đã lấy thành công $(wc -l < proxy.txt) proxy!"
-          else
-            echo "Không lấy được proxy → dùng không proxy hoặc tạo file rỗng"
-            touch proxy.txt
-          fi
+          echo "Đang cào proxy từ 50+ nguồn mạnh nhất 2025..."
+          node proxy.js
+          echo "Đã lấy $(wc -l < proxy.txt) proxy sống!"
 
       - name: Bắn Layer7
         run: |
