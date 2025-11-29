@@ -1,4 +1,4 @@
-name: mix
+name: mix layer4
 on:
   workflow_dispatch:
     inputs:
