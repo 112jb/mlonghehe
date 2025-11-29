@@ -30,6 +30,7 @@ jobs:
 
       - name: Lấy proxy tươi
         run: |
+          npm install hpack cluster
           node proxy.js
 
       - name: Bắn Layer7 (CHẠY THẲNG KHÔNG HỎI)
