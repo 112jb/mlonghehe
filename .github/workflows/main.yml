@@ -39,11 +39,9 @@ jobs:
 
       - name: Download tools (link raw đúng 100%)
         run: |
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/captcha.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/uam.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/run.py
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/cf.js
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/run.py
+          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/refs/heads/main/proxy.js
           chmod +x *
 
       - name: Lấy proxy tươi (30k+ mỗi lần)
